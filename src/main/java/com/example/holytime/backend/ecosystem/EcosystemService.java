@@ -21,6 +21,17 @@ public class EcosystemService {
     public void initEcosystem(Ant ant) {
         System.out.println("El ecosistema se está inicializando");
 
+        this.ecosystem.initPitPheromonesGraph();
+        this.ecosystem.initPitList();
+        if(ant.getEvents().length > 0) {
+            System.out.println("Preparando eventos");
+            this.ecosystem.initEventList();
+        }
+        if(ant.getFood().length > 0) {
+            System.out.println("Preparando restauración");
+            this.ecosystem.initFoodList();
+        }
+
     }
 
 }

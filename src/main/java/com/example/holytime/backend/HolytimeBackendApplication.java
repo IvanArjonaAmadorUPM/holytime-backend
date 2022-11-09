@@ -6,15 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@RestController
 public class HolytimeBackendApplication {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(HolytimeBackendApplication.class, args);
+		System.out.println("El servidor está esperando solicitudes");
 	}
-	@GetMapping
-	public String hello() {
-		return "Hello World!";
-	}
+
 }

@@ -3,6 +3,7 @@ package com.example.holytime.backend.ecosystem;
 import com.example.holytime.backend.ant.Ant;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 @Service
@@ -19,8 +20,13 @@ public class EcosystemService {
     }
 
     public void initEcosystem(Ant ant) {
-        System.out.println("El ecosistema se está inicializando");
 
+        System.out.println("El ecosistema se está inicializando");
+        try {
+            this.ecosystem.initEcosystemDate(ant);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         this.ecosystem.initPitPheromonesGraph();
         this.ecosystem.initPitList();
         if(ant.getEvents().length > 0) {

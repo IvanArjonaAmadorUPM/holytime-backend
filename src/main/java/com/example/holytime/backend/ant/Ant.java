@@ -30,7 +30,6 @@ public class Ant {
                String[] profiles,
                String userEmail
     ) {
-        System.out.println(latitude);
         this.accesible = accesible;
         this.userEmail = userEmail;
         this.day = day;

@@ -1,6 +1,7 @@
 package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
+import com.example.holytime.backend.firebase.FirebaseService;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
 
@@ -11,6 +12,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class Ecosystem {
 
@@ -22,6 +25,7 @@ public class Ecosystem {
     private ArrayList<Nest> FoodList = new ArrayList<Nest>();
 
 
+
     private double[][] PheromonesGraph;
 
     public Ecosystem() {
@@ -30,6 +34,14 @@ public class Ecosystem {
 
     public void initPitPheromonesGraph() {
         //// TODO: 09/11/2022 Crear grafo de feromonas
+        FirebaseService firebaseService = new FirebaseService();
+        try {
+            firebaseService.getPheromones();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void initPitList() {
@@ -82,7 +94,14 @@ public class Ecosystem {
 
     public void initEventList() {
         //// TODO: 09/11/2022 Crear lista de eventos
-
+        FirebaseService firebaseService = new FirebaseService();
+        try {
+            firebaseService.getEvents();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void initFoodList() {

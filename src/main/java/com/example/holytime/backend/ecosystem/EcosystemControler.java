@@ -11,12 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "api/getRoute")
 public class EcosystemControler {
-    private final EcosystemService ecosystemService;
-
     @Autowired
-    public EcosystemControler(EcosystemService ecosystemService) {
-        this.ecosystemService = ecosystemService;
-    }
+   EcosystemService ecosystemService;
+
     @GetMapping()
     public void createNewAnt(@RequestBody Ant ant) {
         ecosystemService.createNewRoute(ant);

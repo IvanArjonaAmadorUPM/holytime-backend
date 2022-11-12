@@ -4,15 +4,15 @@ import com.example.holytime.backend.ant.Ant;
 import com.example.holytime.backend.firebase.FirebaseService;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Ecosystem {
@@ -23,10 +23,8 @@ public class Ecosystem {
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
     private ArrayList<Nest> EventsList = new ArrayList<Nest>();
     private ArrayList<Nest> FoodList = new ArrayList<Nest>();
-
-
-
-    private double[][] PheromonesGraph;
+    public final int pheromonesValue = 100;
+    Map<String,Object> pheromonesGraph = new HashMap<String,Object>();
 
     public Ecosystem() {
 
@@ -35,14 +33,41 @@ public class Ecosystem {
     public void initPitPheromonesGraph() {
         //// TODO: 09/11/2022 Crear grafo de feromonas
         FirebaseService firebaseService = new FirebaseService();
+        ObjectMapper oMapper = new ObjectMapper();
+
         try {
-            firebaseService.getPheromones();
+            Map<String, Object> aux = firebaseService.getPheromones();
+            for (Map.Entry<String, Object> entry : aux.entrySet()) {
+                this.pheromonesGraph = oMapper.convertValue( aux.get(entry.getKey()), HashMap.class);
+
+                for(int i=0; i<this.PitList.size(); i++) {
+                    int auxiliarArray [] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
+                    this.pheromonesGraph.put(Integer.toString(i),auxiliarArray);
+                }
+                System.out.println("Estado inicial del grafo de feromonas");
+                this.printPheromonesGraph();
+
+            }
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private void printPheromonesGraph() {
+        System.out.println("Grafo de feromonas");
+            for (String clave:this.pheromonesGraph.keySet()) {
+                System.out.println("Clave: " + clave );
+                 System.out.println(this.pheromonesGraph.get(clave));
+            }
+        }
+    private void changePheromonesRoute(String pit1, int pit2){
+        ArrayList aux = (ArrayList) this.pheromonesGraph.get(pit1);
+        aux.set(pit2,this.pheromonesValue);
+        this.pheromonesGraph.put(pit1,aux);
+    }
+
 
     public void initPitList() {
         Pit pit;
@@ -93,7 +118,6 @@ public class Ecosystem {
     }
 
     public void initEventList() {
-        //// TODO: 09/11/2022 Crear lista de eventos
         FirebaseService firebaseService = new FirebaseService();
         try {
             firebaseService.getEvents();
@@ -105,7 +129,6 @@ public class Ecosystem {
     }
 
     public void initFoodList() {
-        //// TODO: 09/11/2022 Crear lista de restauración
     }
 
     public void initEcosystemDate(Ant ant) throws ParseException {

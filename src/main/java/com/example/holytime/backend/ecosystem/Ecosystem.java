@@ -24,6 +24,12 @@ public class Ecosystem {
     private ArrayList<Nest> EventsList = new ArrayList<Nest>();
     private ArrayList<Nest> FoodList = new ArrayList<Nest>();
     public final int pheromonesValue = 100;
+    private boolean[] visitedPits;
+
+    private boolean isEventSelected;
+    private boolean isFoodSelected;
+    private int stopsNumberSelected = 0;
+    private boolean isAntVisitedFood = false;
     Map<String,Object> pheromonesGraph = new HashMap<String,Object>();
 
     public Ecosystem() {
@@ -154,5 +160,17 @@ public class Ecosystem {
             return "Sabado";
 
         return "Domingo";
+    }
+
+    public void initLocalVariables(Ant ant) {
+        if(this.visitedPits == null) this.visitedPits = new boolean[this.PitList.size()];
+
+            for(int i = 0; i < this.PitList.size(); i++){
+                this.visitedPits[i] = false;
+            }
+
+
+        this.isEventSelected = ant.getEvents().length > 0;
+        this.isFoodSelected = ant.getFood().length > 0;
     }
 }

@@ -14,9 +14,10 @@ public class EcosystemService {
         }
         public void createNewRoute(Ant ant) {
 
-            System.out.println("Petición realizada");
+            System.out.println("La peticion es");
             System.out.println(ant.toString());
             initEcosystem(ant);
+
     }
 
     public void initEcosystem(Ant ant) {
@@ -37,6 +38,7 @@ public class EcosystemService {
             System.out.println("Preparando restauración");
             this.ecosystem.initFoodList();
         }
+        this.ecosystem.initLocalVariables(ant);
 
     }
 

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class EcosystemService {
@@ -17,6 +18,22 @@ public class EcosystemService {
             System.out.println("La peticion es");
             System.out.println(ant.toString());
             initEcosystem(ant);
+
+            HashMap<Integer, Object> solution = new HashMap<Integer, Object>();
+
+            while(this.ecosystem.continueRoute()){
+                // choose new stop in route
+                Object nextStep = this.ecosystem.getStop(ant);
+
+
+                //add movement to route
+
+                //add stop to route
+                //solution.put(this.ecosystem.getStopId(), nextStep);
+
+                // TODO update current hour, current location, time left, visitedPit, and other values
+                break;
+            }
 
     }
 

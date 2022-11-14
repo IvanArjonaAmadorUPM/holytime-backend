@@ -19,6 +19,11 @@ public class Ecosystem {
 
     private int timeLeft;
     private Date currentDate;
+
+    private String currentHour;
+    private double currentLatitude;
+    private double currentLongitude;
+
     private String weekDay;
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
     private ArrayList<Nest> EventsList = new ArrayList<Nest>();
@@ -28,9 +33,9 @@ public class Ecosystem {
 
     private boolean isEventSelected;
     private boolean isFoodSelected;
-    private int stopsNumberSelected = 0;
+    private int stopsId = 0;
     private boolean isAntVisitedFood = false;
-    Map<String,Object> pheromonesGraph = new HashMap<String,Object>();
+    Map<String, Object> pheromonesGraph = new HashMap<String, Object>();
 
     public Ecosystem() {
 
@@ -44,11 +49,11 @@ public class Ecosystem {
         try {
             Map<String, Object> aux = firebaseService.getPheromones();
             for (Map.Entry<String, Object> entry : aux.entrySet()) {
-                this.pheromonesGraph = oMapper.convertValue( aux.get(entry.getKey()), HashMap.class);
+                this.pheromonesGraph = oMapper.convertValue(aux.get(entry.getKey()), HashMap.class);
 
-                for(int i=0; i<this.PitList.size(); i++) {
-                    int auxiliarArray [] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
-                    this.pheromonesGraph.put(Integer.toString(i),auxiliarArray);
+                for (int i = 0; i < this.PitList.size(); i++) {
+                    int auxiliarArray[] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
+                    this.pheromonesGraph.put(Integer.toString(i), auxiliarArray);
                 }
                 System.out.println("Estado inicial del grafo de feromonas");
                 this.printPheromonesGraph();
@@ -63,21 +68,22 @@ public class Ecosystem {
 
     private void printPheromonesGraph() {
         System.out.println("Grafo de feromonas");
-            for (String clave:this.pheromonesGraph.keySet()) {
-                System.out.println("Clave: " + clave );
-                 System.out.println(this.pheromonesGraph.get(clave));
-            }
+        for (String clave : this.pheromonesGraph.keySet()) {
+            System.out.println("Clave: " + clave);
+            System.out.println(this.pheromonesGraph.get(clave));
         }
-    private void changePheromonesRoute(String pit1, int pit2){
+    }
+
+    private void changePheromonesRoute(String pit1, int pit2) {
         ArrayList aux = (ArrayList) this.pheromonesGraph.get(pit1);
-        aux.set(pit2,this.pheromonesValue);
-        this.pheromonesGraph.put(pit1,aux);
+        aux.set(pit2, this.pheromonesValue);
+        this.pheromonesGraph.put(pit1, aux);
     }
 
 
     public void initPitList() {
         Pit pit;
-        pit = new Pit("Capilla del Oidor", 1, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4814468, 3.3636800, 30, 0.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"}, "10:00-14:00/16:00-19:00", true, 0, 0, new String[]{});
+        pit = new Pit("Capilla del Oidor", 1, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4814468, -3.3636800, 30, 0.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"}, "10:00-14:00/16:00-19:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
         pit = new Pit("Centro de Interpretación Alcalá Medieval", 2, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4812400, -3.3711437, 15, 0.0f, new String[]{"Jueves", "Viernes", "Sabado", "Domingo"}, "11:00-14:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
@@ -89,7 +95,7 @@ public class Ecosystem {
         this.PitList.add(pit);
         pit = new Pit("Yacimiento Arqueológico Casa de Hippolytus", 6, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Arqueologia"}, 40.4767920, -3.3907310, 40, 0.0f, new String[]{"Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"}, "10:00-14:00/16:00-19:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
-        pit = new Pit("Corral de Comedias", 7, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Edificio"}, 40.4824717, -3.3644645, 35, 3.0f, new String[]{"Lunes", "Martes", "Miercoles", "Sabado",}, "", false, 0, 0, new String[]{"11:30", "12:30", "13:30", "17:00"});
+        pit = new Pit("Corral de Comedias", 7, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Edificio"}, 40.4824717, -3.3644645, 35, 3.0f, new String[]{"Lunes", "Martes", "Miercoles", "Sabado",}, "Guia", false, 0, 0, new String[]{"11:30", "12:30", "13:30", "17:00"});
         this.PitList.add(pit);
         pit = new Pit("Universidad de Alcalá", 8, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Edificio"}, 40.4829939, -3.3631127, 60, 6.0f, new String[]{"Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"}, "Guia", true, 0, 0, new String[]{"10:00", "13:00", "16:00", "18:00"});
         this.PitList.add(pit);
@@ -155,7 +161,7 @@ public class Ecosystem {
         if (day.equals("THURSDAY"))
             return "Jueves";
         if (day.equals("FRIDAY"))
-            return"Viernes";
+            return "Viernes";
         if (day.equals("SATURDAY"))
             return "Sabado";
 
@@ -163,14 +169,64 @@ public class Ecosystem {
     }
 
     public void initLocalVariables(Ant ant) {
-        if(this.visitedPits == null) this.visitedPits = new boolean[this.PitList.size()];
+        if (this.visitedPits == null) this.visitedPits = new boolean[this.PitList.size()];
 
-            for(int i = 0; i < this.PitList.size(); i++){
-                this.visitedPits[i] = false;
-            }
+        for (int i = 0; i < this.PitList.size(); i++) {
+            this.visitedPits[i] = false;
+        }
+        this.currentLatitude = ant.getLatitude();
+        this.currentLongitude = ant.getLongitude();
 
+        this.currentHour = ant.getHour();
 
         this.isEventSelected = ant.getEvents().length > 0;
         this.isFoodSelected = ant.getFood().length > 0;
+    }
+
+    public boolean continueRoute() {
+        int timeMargin = 10;
+        return this.timeLeft > timeMargin;
+    }
+
+    public Integer getStopId() {
+        int solution = this.stopsId;
+        this.stopsId++;
+        return solution;
+    }
+
+    public Object getStop(Ant ant) {
+        //TODO GET FOOD
+        if (this.isEventSelected) {
+            //event = chooseEvent
+            Object event = this.chooseEvent(ant);
+            if (event != null) {
+                return event;
+            } else {
+            Pit pit = this.choosePit(ant);
+            return pit;
+            }
+        }
+        return null;
+    }
+
+    private Pit choosePit(Ant ant) {
+        //return event if there is one, and return null if there is not
+        double[] pitScore = new double[this.PitList.size()];
+        for (int i = 0; i < this.PitList.size(); i++) {
+            Pit pit = this.PitList.get(i);
+            pitScore[i] = pit.calculatePitScore(ant, this.weekDay, this.timeLeft, this.visitedPits[i], this.currentLatitude, this.currentLongitude, this.currentHour);
+            System.out.println("Pit " + pit.getName() + " score: " + pitScore[i]);
+            // TODO add score of pheromones
+
+        }
+        return null;
+    }
+
+    public Object chooseEvent(Ant ant){
+        //TODO
+        // Check if there is an event in the current day and in the current time
+        //return event if there is one, and return null if there is not
+
+        return null;
     }
 }

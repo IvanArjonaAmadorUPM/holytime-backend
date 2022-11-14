@@ -55,7 +55,7 @@ public class Pit extends Nest {
             return -100;
         }
         if(ant.isAccesible() && !this.getAccesible()){
-                return -100;
+            return -100;
         }
         if(!this.isOpen(weekDay, timeLeft ,currentHour)){
             return -100;
@@ -64,7 +64,6 @@ public class Pit extends Nest {
         //add preferences
         for (String preference : ant.getPreferences()) {
             if (Arrays.asList(this.getType()).contains(preference)) {
-                System.out.println("Preference" + preference +" is in the pit" + this.getName());
                 score += 100;
             }else{
                 score += 20;
@@ -75,7 +74,6 @@ public class Pit extends Nest {
         for (String profile : ant.getProfiles()) {
             if (Arrays.asList(this.getProfile()).contains(profile)) {
                 score += 50;
-                System.out.println("profile" + profile +" is in the pit" + this.getName());
             }
         }
 

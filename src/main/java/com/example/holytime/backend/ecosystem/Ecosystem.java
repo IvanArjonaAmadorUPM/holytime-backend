@@ -28,7 +28,7 @@ public class Ecosystem {
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
     private ArrayList<Nest> EventsList = new ArrayList<Nest>();
     private ArrayList<Nest> FoodList = new ArrayList<Nest>();
-    public final int pheromonesValue = 100;
+    public final int pheromonesValue = 10;
     private boolean[] visitedPits;
 
     private boolean isEventSelected;
@@ -194,19 +194,21 @@ public class Ecosystem {
         return solution;
     }
 
-    public Object getStop(Ant ant) {
+    public Nest getStop(Ant ant) {
         //TODO GET FOOD
         if (this.isEventSelected) {
             //event = chooseEvent
-            Object event = this.chooseEvent(ant);
+            Nest event = this.chooseEvent(ant);
             if (event != null) {
                 return event;
             } else {
             Pit pit = this.choosePit(ant);
             return pit;
             }
+        }else {
+            Pit pit = this.choosePit(ant);
+            return pit;
         }
-        return null;
     }
 
     private Pit choosePit(Ant ant) {
@@ -219,14 +221,59 @@ public class Ecosystem {
             // TODO add score of pheromones
 
         }
-        return null;
+        //get max value from pit score
+        double max = 0;
+        int maxPitPosition = -1;
+        for (int j = 0; j < pitScore.length; j++) {
+            if (pitScore[j] > max) {
+                max = pitScore[j];
+                maxPitPosition = j;
+            }
+        }
+        if(maxPitPosition == -1){
+            return null;
+        }else{ // update visited pit
+            this.visitedPits[maxPitPosition] = true;
+            return this.PitList.get(maxPitPosition);
+        }
     }
 
-    public Object chooseEvent(Ant ant){
+    public Nest chooseEvent(Ant ant){
         //TODO
         // Check if there is an event in the current day and in the current time
         //return event if there is one, and return null if there is not
 
         return null;
+    }
+
+    public void updateCurrentLocation(double latitude, double longitude) {
+        this.currentLatitude = latitude;
+        this.currentLongitude = longitude;
+    }
+
+    public void updateTimeLeft(int totalTimeSpent) {
+        this.timeLeft -= totalTimeSpent;
+    }
+
+    public void updateCurrentHour(int totalTimeSpent) {
+        int currentHour = Integer.parseInt(this.currentHour.split(":")[0]);
+        int currentMinute = Integer.parseInt(this.currentHour.split(":")[1]);
+        int newMinute = currentMinute + totalTimeSpent;
+        int newHour = currentHour + newMinute / 60;
+        newMinute = newMinute % 60;
+        //check if new minute is 1 long
+        if (newMinute < 10) {
+            this.currentHour = newHour + ":0" + newMinute;
+        } else {
+            this.currentHour = newHour + ":" + newMinute;
+        }
+    }
+
+    public String getCurrentHour() {
+        return this.currentHour;
+    }
+
+    public String getTimeLeft() {
+        return this.timeLeft + " min";
     }
 }

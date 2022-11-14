@@ -1,6 +1,8 @@
 package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
+import com.example.holytime.backend.nest.Nest;
+import com.example.holytime.backend.pit.Pit;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -19,22 +21,45 @@ public class EcosystemService {
             System.out.println(ant.toString());
             initEcosystem(ant);
 
-            HashMap<Integer, Object> solution = new HashMap<Integer, Object>();
+            HashMap<Integer, Nest> solution = new HashMap<Integer, Nest>();
 
             while(this.ecosystem.continueRoute()){
+                int iteracion = -1;
+                iteracion++;
                 // choose new stop in route
-                Object nextStep = this.ecosystem.getStop(ant);
-
-
-                //add movement to route
+                Nest nextStep = this.ecosystem.getStop(ant);
+                if(nextStep==null){
+                    break;
+                }
+                //TODO add movement to route
 
                 //add stop to route
-                //solution.put(this.ecosystem.getStopId(), nextStep);
+                solution.put(this.ecosystem.getStopId(), nextStep);
 
-                // TODO update current hour, current location, time left, visitedPit, and other values
-                break;
+                // TODO need to add time of movement
+                int totalTimeSpent = nextStep.getVisitTime();
+                this.ecosystem.updateCurrentHour(totalTimeSpent);
+                this.ecosystem.updateTimeLeft(totalTimeSpent);
+                this.ecosystem.updateCurrentLocation(nextStep.getLatitude(), nextStep.getLongitude());
+
+                System.out.println("Iteracion : " + iteracion);
+                System.out.println("Hora actual : " + this.ecosystem.getCurrentHour());
+                System.out.println("Tiempo restante : " + this.ecosystem.getTimeLeft());
+                System.out.println("PIT " + nextStep.getName() + " visitado");
+                System.out.println("-----------------------------------------------");
+
+
             }
+            System.out.println("///////////////////////////////////////////////");
+            System.out.println("La ruta es");
+            // show route
+            System.out.println("longitud de la visita: " + solution.size());
 
+            for (int i = 0; i < solution.size(); i++) {
+                Nest nest = solution.get(i);
+                System.out.println("Iteración: "+ i + "elegido: " + nest.getName());
+
+            }
     }
 
     public void initEcosystem(Ant ant) {

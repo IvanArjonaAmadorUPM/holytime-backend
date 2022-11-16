@@ -2,10 +2,16 @@ package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
 import com.example.holytime.backend.firebase.FirebaseService;
+import com.example.holytime.backend.google.GoogleService;
+import com.example.holytime.backend.matrix.Matrix;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -23,6 +29,14 @@ public class Ecosystem {
     private String currentHour;
     private double currentLatitude;
     private double currentLongitude;
+
+    public double getCurrentLatitude() {
+        return currentLatitude;
+    }
+
+    public double getCurrentLongitude() {
+        return currentLongitude;
+    }
 
     private String weekDay;
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
@@ -275,5 +289,39 @@ public class Ecosystem {
 
     public String getTimeLeft() {
         return this.timeLeft + " min";
+    }
+
+    public Matrix getMovement(double currentLatitude, double currentLongitude, double nextLatitude, double nextLongitude) {
+        GoogleService googleService = new GoogleService();
+        try {
+            String result = googleService.getMatrix(currentLatitude, currentLongitude, nextLatitude, nextLongitude);
+
+            JSONParser jp = new JSONParser();
+            JSONObject jo = (JSONObject) jp.parse(result);
+            JSONArray ja = (JSONArray) jo.get("rows");
+            jo = (JSONObject) ja.get(0);
+            ja = (JSONArray) jo.get("elements");
+            jo = (JSONObject) ja.get(0);
+            JSONObject je = (JSONObject) jo.get("distance");
+            JSONObject jf = (JSONObject) jo.get("duration");
+            String distanceResponse = (String) je.get("text");
+            String timeResponde = (String) jf.get("text");
+
+
+            String time = timeResponde.split(" ")[0];
+            String distance = distanceResponse.split(" ")[0];
+
+            int timeInt = Integer.parseInt(time);
+            double distanceDouble = Double.parseDouble(distance);
+            Matrix matrix = new Matrix(timeInt, distanceDouble);
+            return matrix;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (net.minidev.json.parser.ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }

@@ -1,10 +1,13 @@
 package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
+import com.example.holytime.backend.google.GoogleService;
+import com.example.holytime.backend.matrix.Matrix;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,42 +24,47 @@ public class EcosystemService {
             System.out.println(ant.toString());
             initEcosystem(ant);
 
-            HashMap<Integer, Nest> solution = new HashMap<Integer, Nest>();
+            HashMap<Integer, Nest> stops = new HashMap<Integer, Nest>();
+            HashMap<Integer, Matrix> movements = new HashMap<Integer, Matrix>();
 
             while(this.ecosystem.continueRoute()){
-                int iteracion = -1;
-                iteracion++;
+
                 // choose new stop in route
                 Nest nextStep = this.ecosystem.getStop(ant);
                 if(nextStep==null){
                     break;
                 }
-                //TODO add movement to route
-
+                //get id
+                int id = this.ecosystem.getStopId();
+                //add movement to route
+                Matrix matrix = ecosystem.getMovement(this.ecosystem.getCurrentLatitude(), this.ecosystem.getCurrentLongitude(), nextStep.getLatitude(), nextStep.getLongitude());
                 //add stop to route
-                solution.put(this.ecosystem.getStopId(), nextStep);
+                movements.put(id, matrix);
+                stops.put(id, nextStep);
 
-                // TODO need to add time of movement
-                int totalTimeSpent = nextStep.getVisitTime();
+                //  add time of movement and update current values
+                int totalTimeSpent = nextStep.getVisitTime() + matrix.getTime();
                 this.ecosystem.updateCurrentHour(totalTimeSpent);
                 this.ecosystem.updateTimeLeft(totalTimeSpent);
                 this.ecosystem.updateCurrentLocation(nextStep.getLatitude(), nextStep.getLongitude());
 
-                System.out.println("Iteracion : " + iteracion);
                 System.out.println("Hora actual : " + this.ecosystem.getCurrentHour());
                 System.out.println("Tiempo restante : " + this.ecosystem.getTimeLeft());
                 System.out.println("PIT " + nextStep.getName() + " visitado");
                 System.out.println("-----------------------------------------------");
 
-
             }
             System.out.println("///////////////////////////////////////////////");
             System.out.println("La ruta es");
             // show route
-            System.out.println("longitud de la visita: " + solution.size());
+            System.out.println("longitud de la visita: " + stops.size());
 
-            for (int i = 0; i < solution.size(); i++) {
-                Nest nest = solution.get(i);
+            for (int i = 0; i < stops.size(); i++) {
+                Nest nest = stops.get(i);
+                Matrix matrix = movements.get(i);
+                if(matrix!=null){
+                    System.out.println("Movimiento: " + matrix.getTime() + " minutos" + " distancia: " + matrix.getDistance() + " KM");
+                }
                 System.out.println("Iteración: "+ i + "elegido: " + nest.getName());
 
             }

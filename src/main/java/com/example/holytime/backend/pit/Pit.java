@@ -12,6 +12,7 @@ public class Pit extends Nest {
     private int importance;
     String specialHour [];
 
+    final int unablePit = -10000;
     //constructor
     public Pit() {
         super();
@@ -52,13 +53,13 @@ public class Pit extends Nest {
     public double calculatePitScore(Ant ant, String weekDay, int timeLeft, boolean visitedPit, double currentLatitude, double currentLongitude, String currentHour) {
         double score = 0;
         if(visitedPit){
-            return -100;
+            return unablePit;
         }
         if(ant.isAccesible() && !this.getAccesible()){
-            return -100;
+            return unablePit;
         }
         if(!this.isOpen(weekDay, timeLeft ,currentHour)){
-            return -100;
+            return unablePit;
         }
         //the pit is available and open and can be visited
         //add preferences
@@ -76,19 +77,18 @@ public class Pit extends Nest {
                 score += 50;
             }
         }
-
-        score = score + this.getFame()*10 + this.getImportance()*10;
         //add fame score and importance score
+        score = score + this.getFame()*10 + this.getImportance()*10;
 
+        //subtract distance
         double distance = DistanceCalculator.getDistance(currentLatitude, currentLongitude,this.getLatitude(), this.getLongitude() , 'K');
-
         score = score - distance*100;
 
         return score;
     }
 
     private boolean isOpen(String weekDay, int timeLeft , String currentHour) {
-        //TODO: method that check if the pit is open
+        //method that check if the pit is open
         boolean dayOpen = false;
         boolean isOpen = false;
         for(int i = 0; i< this.getDays().length; i++){

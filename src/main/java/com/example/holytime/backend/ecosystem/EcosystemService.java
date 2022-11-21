@@ -27,14 +27,27 @@ public class EcosystemService {
             HashMap<Integer, Nest> stops = new HashMap<Integer, Nest>();
             HashMap<Integer, Matrix> movements = new HashMap<Integer, Matrix>();
 
+            //init ecosystem steps positions
+            this.ecosystem.currentId = -1;
+            int lastPosition = -1;
             while(this.ecosystem.continueRoute()){
-
                 // choose new stop in route
                 Nest nextStep = this.ecosystem.getStop(ant);
                 if(nextStep==null){
                     break;
                 }
-                //get id
+                //getPheromonesRouteValue
+                if(nextStep instanceof Pit){
+                    lastPosition = this.ecosystem.currentId;
+                    this.ecosystem.currentId = nextStep.getId();
+                    if(lastPosition!=-1 && this.ecosystem.currentId!=-1){
+                        this.ecosystem.changePheromonesRouteValue(String.valueOf(lastPosition),this.ecosystem.currentId);
+                    }
+                }else{
+                    this.ecosystem.currentId = -1;
+                    lastPosition = -1;
+                }
+                //update  id
                 int id = this.ecosystem.getStopId();
                 //add movement to route
                 Matrix matrix = ecosystem.getMovement(this.ecosystem.getCurrentLatitude(), this.ecosystem.getCurrentLongitude(), nextStep.getLatitude(), nextStep.getLongitude());
@@ -68,7 +81,10 @@ public class EcosystemService {
                 System.out.println("Iteración: "+ i + "elegido: " + nest.getName());
 
             }
-    }
+            //save pheromones in database
+            this.ecosystem.updatePhremonesGraph();
+
+        }
 
     public void initEcosystem(Ant ant) {
 

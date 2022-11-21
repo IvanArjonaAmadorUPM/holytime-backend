@@ -29,7 +29,7 @@ public class Ecosystem {
     private String currentHour;
     private double currentLatitude;
     private double currentLongitude;
-
+    int currentId;
     public double getCurrentLatitude() {
         return currentLatitude;
     }
@@ -56,15 +56,13 @@ public class Ecosystem {
     }
 
     public void initPitPheromonesGraph() {
-        //// TODO: 09/11/2022 Crear grafo de feromonas
+        ////Crear grafo de feromonas
         FirebaseService firebaseService = new FirebaseService();
         ObjectMapper oMapper = new ObjectMapper();
 
         try {
-            Map<String, Object> aux = firebaseService.getPheromones();
-            for (Map.Entry<String, Object> entry : aux.entrySet()) {
-                this.pheromonesGraph = oMapper.convertValue(aux.get(entry.getKey()), HashMap.class);
-
+                //get class type of object
+                this.pheromonesGraph = firebaseService.getPheromones();
                 for (int i = 0; i < this.PitList.size(); i++) {
                     int auxiliarArray[] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
                     this.pheromonesGraph.put(Integer.toString(i), auxiliarArray);
@@ -72,7 +70,7 @@ public class Ecosystem {
                 System.out.println("Estado inicial del grafo de feromonas");
                 this.printPheromonesGraph();
 
-            }
+
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -80,7 +78,7 @@ public class Ecosystem {
         }
     }
 
-    private void printPheromonesGraph() {
+    void printPheromonesGraph() {
         System.out.println("Grafo de feromonas");
         for (String clave : this.pheromonesGraph.keySet()) {
             System.out.println("Clave: " + clave);
@@ -88,10 +86,15 @@ public class Ecosystem {
         }
     }
 
-    private void changePheromonesRoute(String pit1, int pit2) {
+    void changePheromonesRouteValue(String pit1, int pit2) {
         ArrayList aux = (ArrayList) this.pheromonesGraph.get(pit1);
-        aux.set(pit2, this.pheromonesValue);
+        aux.set(pit2, (long) aux.get(pit2) + this.pheromonesValue);
         this.pheromonesGraph.put(pit1, aux);
+    }
+
+    long getPheromonesRouteValue(String pit1, int pit2) {
+        ArrayList aux = (ArrayList) this.pheromonesGraph.get(pit1);
+        return (long) aux.get(pit2);
     }
 
 
@@ -210,6 +213,7 @@ public class Ecosystem {
 
     public Nest getStop(Ant ant) {
         //TODO GET FOOD
+
         if (this.isEventSelected) {
             //event = chooseEvent
             Nest event = this.chooseEvent(ant);
@@ -231,8 +235,12 @@ public class Ecosystem {
         for (int i = 0; i < this.PitList.size(); i++) {
             Pit pit = this.PitList.get(i);
             pitScore[i] = pit.calculatePitScore(ant, this.weekDay, this.timeLeft, this.visitedPits[i], this.currentLatitude, this.currentLongitude, this.currentHour);
+
+            // add score of pheromones
+            if(this.currentId!=-1){ // if current position is a pit
+                pitScore[i] += this.getPheromonesRouteValue(String.valueOf(this.currentId), i);
+            }
             System.out.println("Pit " + pit.getName() + " score: " + pitScore[i]);
-            // TODO add score of pheromones
 
         }
         //get max value from pit score
@@ -323,5 +331,29 @@ public class Ecosystem {
         }
 
 
+    }
+    public void updatePhremonesGraph(){
+
+        this.evaporatePheromones();
+        FirebaseService firebaseService = new FirebaseService();
+        try {
+            firebaseService.updatePheromonesMap(this.pheromonesGraph);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void evaporatePheromones() {
+        // in pheromones map, if value > 2, value = value - 2
+        for(int i = 0; i < this.pheromonesGraph.size(); i++){
+            ArrayList aux = (ArrayList) this.pheromonesGraph.get(String.valueOf(i));
+            for(int j = 0; j < aux.size(); j++){
+                if((long) aux.get(j) > 2){
+                    aux.set(j, (long) aux.get(j) - 2);}
+            }
+            this.pheromonesGraph.put(String.valueOf(i), aux);
+        }
     }
 }

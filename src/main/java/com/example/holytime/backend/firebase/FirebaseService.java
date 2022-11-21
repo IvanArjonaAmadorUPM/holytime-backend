@@ -32,4 +32,10 @@ public class FirebaseService {
         }
         return null;
     }
+    //
+    public void updatePheromonesMap( Map map) throws ExecutionException, InterruptedException {
+
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        ApiFuture<WriteResult> future = dbFirestore.collection("pheromones").document("pheromones").set(map);
+    }
 }

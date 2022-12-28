@@ -41,7 +41,7 @@ public class EcosystemService {
                     lastPosition = this.ecosystem.currentId;
                     this.ecosystem.currentId = nextStep.getId();
                     if(lastPosition!=-1 && this.ecosystem.currentId!=-1){
-                        this.ecosystem.changePheromonesRouteValue(String.valueOf(lastPosition),this.ecosystem.currentId);
+                        this.ecosystem.changePheromonesRouteValue(String.valueOf(lastPosition-1 ),this.ecosystem.currentId -1);
                     }
                 }else{
                     this.ecosystem.currentId = -1;

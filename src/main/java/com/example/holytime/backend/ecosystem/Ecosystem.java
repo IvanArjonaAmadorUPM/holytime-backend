@@ -238,7 +238,7 @@ public class Ecosystem {
 
             // add score of pheromones
             if(this.currentId!=-1){ // if current position is a pit
-                pitScore[i] += this.getPheromonesRouteValue(String.valueOf(this.currentId), i);
+                pitScore[i] += this.getPheromonesRouteValue(String.valueOf(this.currentId-1), i);
             }
             System.out.println("Pit " + pit.getName() + " score: " + pitScore[i]);
 

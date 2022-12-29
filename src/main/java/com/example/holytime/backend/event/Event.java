@@ -5,6 +5,7 @@ import com.example.holytime.backend.nest.Nest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Event extends Nest {
     public String eventId;
@@ -128,5 +129,13 @@ public class Event extends Nest {
     }
 
 
+    public boolean isEventInAntPreferences(Ant ant) {
+        for (String profile : ant.getEvents()) {
+            if (Arrays.asList(super.getType()).contains(profile)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

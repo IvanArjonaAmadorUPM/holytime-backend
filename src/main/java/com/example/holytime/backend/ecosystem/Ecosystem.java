@@ -264,7 +264,7 @@ public class Ecosystem {
         //return event if there is one, and return null if there is not
         for (Map.Entry<Integer, Event> entry : this.EventsList.entrySet()) {
             Event event = entry.getValue();
-            if(event.isDayOpen() && !event.visited){
+            if(event.isDayOpen() && !event.visited && event.isEventInAntPreferences(ant)){
                 if(event.checkOpenHours(this.currentHour, ant)){
                     event.visited = true;
                     return event;

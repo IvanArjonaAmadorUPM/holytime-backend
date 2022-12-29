@@ -61,8 +61,14 @@ public class Pit extends Nest {
         if(!this.isOpen(weekDay, timeLeft ,currentHour)){
             return unablePit;
         }
-        //the pit is available and open and can be visited
-        //add preferences
+         //the pit is available and open and can be visited
+
+            // If the pit needs guide, it will be considered if it is near the hour of the guide route. This is checked in the method isOpen.
+            // that means that at this point, if the pit needs guide, it will be open. There is a margin of 10 minutes
+        if(this.getSchedule().equals("Guia")){
+            score+= 45;
+        }
+            //add preferences
         for (String preference : ant.getPreferences()) {
             if (Arrays.asList(this.getType()).contains(preference)) {
                 score += 100;
@@ -70,17 +76,16 @@ public class Pit extends Nest {
                 score += 20;
             }
         }
-
-        //add profile
+            //add profile
         for (String profile : ant.getProfiles()) {
             if (Arrays.asList(this.getProfile()).contains(profile)) {
                 score += 50;
             }
         }
-        //add fame score and importance score
+            //add fame score and importance score
         score = score + this.getFame()*10 + this.getImportance()*10;
 
-        //subtract distance
+            //subtract distance
         double distance = DistanceCalculator.getDistance(currentLatitude, currentLongitude,this.getLatitude(), this.getLongitude() , 'K');
         score = score - distance*100;
 
@@ -95,25 +100,40 @@ public class Pit extends Nest {
             if(this.getDays()[i].equals(weekDay)){
                 dayOpen = true;
                 if(this.getSchedule().equals("Guia")){
-                    //TODO: check if the guide is available
-                    System.out.println(" "+ this.getName() +" Necesita Guia");
+                    isOpen = this.isNearSpecialHour(currentHour);
                 }else{
                     String hoursSchedule[] = this.getSchedule().split("/");
                     for(int j = 0; j< hoursSchedule.length; j++){
                         String hours [] = hoursSchedule[j].split("-");
-                        if(  checkIfOpenByHour( hours[0], hours[1], currentHour) ){
+                        if(checkIfOpenByHour( hours[0], hours[1], currentHour) ){
                             isOpen = true;
                         }
-
                     }
                 }
-
-
             }
         }
 
         return dayOpen && isOpen;
 
+    }
+
+    private boolean isNearSpecialHour(String currentHour) {
+        //method that check if the current hour is near a special hour
+        boolean isNear = false;
+        for(int i = 0; i< this.getSpecialHour().length; i++){
+            String specialHour [] = this.getSpecialHour()[i].split(":");
+            int pitSpecialHour = Integer.parseInt(specialHour[0]);
+            int pitSpecialMinutes = Integer.parseInt(specialHour[1]);
+            String currentHourArray [] = currentHour.split(":");
+            int currentHourInt = Integer.parseInt(currentHourArray[0]);
+            int currentMinutesInt = Integer.parseInt(currentHourArray[1]);
+
+            int timeDifference = ((pitSpecialHour*60)+pitSpecialMinutes) - ((currentHourInt*60)+currentMinutesInt);
+            if( timeDifference < 12 && timeDifference > 0) {
+                isNear = true;
+            }
+        }
+        return isNear;
     }
 
     private boolean checkIfOpenByHour(String openTime, String CloseTime, String currentHour) {

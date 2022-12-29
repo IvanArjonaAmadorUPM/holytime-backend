@@ -11,11 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Service
 public class FirebaseService {
-    public void getEvents() throws ExecutionException, InterruptedException {
+    public HashMap<Integer, Event> getEvents() throws ExecutionException, InterruptedException {
 
         Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<QuerySnapshot> future = dbFirestore.collection("eventos").get();
@@ -52,7 +51,7 @@ public class FirebaseService {
                     document.get("perfil").toString().replace("[","").replace("]","").split(","),
                     document.getString("tipo"),
                     document.getGeoPoint("geolocalización").getLatitude(),
-                    document.getGeoPoint("geolocalización").getLatitude(),
+                    document.getGeoPoint("geolocalización").getLongitude(),
                     duration*60,
                     price,
                     // schedule(always null)
@@ -66,6 +65,7 @@ public class FirebaseService {
             events.put(event.getId(),event);
             id++;
         }
+        return events;
     }
 
     public Map<String, Object> getPheromones() throws ExecutionException, InterruptedException {

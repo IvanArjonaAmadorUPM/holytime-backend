@@ -1,6 +1,7 @@
 package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
+import com.example.holytime.backend.event.Event;
 import com.example.holytime.backend.google.GoogleService;
 import com.example.holytime.backend.matrix.Matrix;
 import com.example.holytime.backend.nest.Nest;
@@ -56,7 +57,14 @@ public class EcosystemService {
                 stops.put(id, nextStep);
 
                 //  add time of movement and update current values
+
                 int totalTimeSpent = nextStep.getVisitTime() + matrix.getTime();
+                if(nextStep instanceof Event && !((Event) nextStep).getStarHour().equals("Todo el día")) {
+                    totalTimeSpent = totalTimeSpent +  ((Event) nextStep).waitingTime;
+                    if( ((Event) nextStep).waitingTime > matrix.getTime()){
+                        totalTimeSpent = totalTimeSpent - matrix.getTime();
+                    }
+                }
                 this.ecosystem.updateCurrentHour(totalTimeSpent);
                 this.ecosystem.updateTimeLeft(totalTimeSpent);
                 this.ecosystem.updateCurrentLocation(nextStep.getLatitude(), nextStep.getLongitude());
@@ -78,7 +86,7 @@ public class EcosystemService {
                 if(matrix!=null){
                     System.out.println("Movimiento: " + matrix.getTime() + " minutos" + " distancia: " + matrix.getDistance() + " KM");
                 }
-                System.out.println("Iteración: "+ i + "elegido: " + nest.getName());
+                System.out.println("Iteración: "+ (i+1) + " elegido: " + nest.getName());
 
             }
             //save pheromones in database

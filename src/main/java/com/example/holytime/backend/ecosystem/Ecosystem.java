@@ -1,6 +1,7 @@
 package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
+import com.example.holytime.backend.event.Event;
 import com.example.holytime.backend.firebase.FirebaseService;
 import com.example.holytime.backend.google.GoogleService;
 import com.example.holytime.backend.matrix.Matrix;
@@ -40,7 +41,7 @@ public class Ecosystem {
 
     private String weekDay;
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
-    private ArrayList<Nest> EventsList = new ArrayList<Nest>();
+    private HashMap<Integer, Event> EventsList = new HashMap<Integer, Event>();
     private ArrayList<Nest> FoodList = new ArrayList<Nest>();
     public final int pheromonesValue = 10;
     private boolean[] visitedPits;
@@ -138,7 +139,7 @@ public class Ecosystem {
         return PitList;
     }
 
-    public ArrayList<Nest> getEventsList() {
+    public HashMap<Integer, Event> getEventsList() {
         return EventsList;
     }
 
@@ -149,7 +150,7 @@ public class Ecosystem {
     public void initEventList() {
         FirebaseService firebaseService = new FirebaseService();
         try {
-            firebaseService.getEvents();
+            this.EventsList = firebaseService.getEvents();
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -213,7 +214,6 @@ public class Ecosystem {
 
     public Nest getStop(Ant ant) {
         //TODO GET FOOD
-
         if (this.isEventSelected) {
             //event = chooseEvent
             Nest event = this.chooseEvent(ant);
@@ -261,10 +261,18 @@ public class Ecosystem {
     }
 
     public Nest chooseEvent(Ant ant){
-        //TODO
-        // Check if there is an event in the current day and in the current time
         //return event if there is one, and return null if there is not
+        for (Map.Entry<Integer, Event> entry : this.EventsList.entrySet()) {
+            Event event = entry.getValue();
+            if(event.isDayOpen() && !event.visited){
+                if(event.checkOpenHours(this.currentHour, ant)){
+                    event.visited = true;
+                    return event;
+                }
 
+            }
+
+        }
         return null;
     }
 
@@ -303,7 +311,6 @@ public class Ecosystem {
         GoogleService googleService = new GoogleService();
         try {
             String result = googleService.getMatrix(currentLatitude, currentLongitude, nextLatitude, nextLongitude);
-
             JSONParser jp = new JSONParser();
             JSONObject jo = (JSONObject) jp.parse(result);
             JSONArray ja = (JSONArray) jo.get("rows");
@@ -320,6 +327,9 @@ public class Ecosystem {
             String distance = distanceResponse.split(" ")[0];
 
             int timeInt = Integer.parseInt(time);
+            if (distance.contains(",")) {
+                distance = distance.replace(",", ".");
+            }
             double distanceDouble = Double.parseDouble(distance);
             Matrix matrix = new Matrix(timeInt, distanceDouble);
             return matrix;

@@ -7,6 +7,7 @@ import com.example.holytime.backend.google.GoogleService;
 import com.example.holytime.backend.matrix.Matrix;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
+import com.example.holytime.backend.restaurant.Restaurant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -159,6 +160,21 @@ public class Ecosystem {
     }
 
     public void initFoodList() {
+        Restaurant restaurant;
+        restaurant = new Restaurant("McDonald's", 1, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"rapida"}, 40.482427, -3.364581, 90, 10.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "11:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("La Huella Vegana de Alcalá de Henares", 2, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"vegetariano"}, 40.479763, -3.367952, 90, 18.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("Miss Sushi Alcalá de Henares", 3, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"japonesa"}, 40.482856, -3.364723, 90, 14.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("La Chelinda", 4, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"mexicana"}, 40.484199, -3.362997, 90, 15.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("Frankie Burgers - Hamburguesería Alcalá de Henares", 5, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"americana"}, 40.483036, -3.365178, 90, 19.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("La Cúpula", 6, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"tradicional"}, 40.483198, -3.367076, 90, 35.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
+        restaurant = new Restaurant("Indalo Tapas", 7, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"tapas"}, 40.483788, -3.363779, 90, 14.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "13:00-23:00", true);
+        this.FoodList.add(restaurant);
     }
 
     public void initEcosystemDate(Ant ant) throws ParseException {

@@ -4,6 +4,7 @@ import com.example.holytime.backend.event.Event;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -84,5 +85,35 @@ public class FirebaseService {
 
         Firestore dbFirestore = FirestoreClient.getFirestore();
         ApiFuture<WriteResult> future = dbFirestore.collection("pheromones").document("pheromones").set(map);
+    }
+
+
+    public void saveRoute(JSONObject jsonObject, String userEmail) throws ExecutionException, InterruptedException{
+        this.checkUser(userEmail);
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        String currentTime = java.time.LocalDate.now().toString() + "_" + java.time.LocalTime.now().getHour() + ":" + java.time.LocalTime.now().getMinute();
+        ApiFuture<WriteResult> future = dbFirestore.collection("userData").document(userEmail).collection("routes").document(currentTime).create(jsonObject);
+    }
+
+    private void checkUser(String userEmail) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> future = dbFirestore.collection("userData").get();
+        List<QueryDocumentSnapshot> documents = null;
+        try {
+            documents = future.get().getDocuments();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        for (DocumentSnapshot document : documents) {
+            if(document.getId().equals(userEmail)){
+                return;
+            }
+        }
+        //if user not exists, create it
+        Map<String, Object> user = new HashMap<>();
+        user.put("email", userEmail);
+        ApiFuture<WriteResult> future2 = dbFirestore.collection("userData").document(userEmail).set(user);
     }
 }

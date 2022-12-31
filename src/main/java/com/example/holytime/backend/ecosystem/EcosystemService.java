@@ -7,10 +7,12 @@ import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
 import com.example.holytime.backend.stop.Stop;
 import com.google.gson.Gson;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class EcosystemService {
@@ -103,8 +105,15 @@ public class EcosystemService {
             String stopsJson = gson.toJson(stops);
             String movementsJson = gson.toJson(movements);
             String antJson = gson.toJson(ant);
-            String json = "{\"stops\":"+stopsJson+",\"movements\":"+movementsJson+",\"ant\":"+antJson+"}";
-            return json;
+            String result = "{\"stops\":"+stopsJson+",\"movements\":"+movementsJson+",\"ant\":"+antJson+"}";
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("route", result);
+            JSONObject jsonObject = new JSONObject(data);
+
+            //save route in database
+            this.ecosystem.saveRoute(jsonObject, ant.getUserEmail());
+            return result;
 
 
 

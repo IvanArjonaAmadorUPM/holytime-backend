@@ -445,4 +445,16 @@ public class Ecosystem {
             return newHour + ":" + newMinute;
         }
     }
+
+
+    public void saveRoute(JSONObject jsonObject, String userEmail) {
+        FirebaseService firebaseService = new FirebaseService();
+        try {
+            firebaseService.saveRoute(jsonObject, userEmail);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

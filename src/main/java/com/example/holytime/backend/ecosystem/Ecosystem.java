@@ -1,5 +1,6 @@
 package com.example.holytime.backend.ecosystem;
 
+import com.example.holytime.backend.Math.DistanceCalculator;
 import com.example.holytime.backend.ant.Ant;
 import com.example.holytime.backend.event.Event;
 import com.example.holytime.backend.firebase.FirebaseService;
@@ -43,7 +44,7 @@ public class Ecosystem {
     private String weekDay;
     private ArrayList<Pit> PitList = new ArrayList<Pit>();
     private HashMap<Integer, Event> EventsList = new HashMap<Integer, Event>();
-    private ArrayList<Nest> FoodList = new ArrayList<Nest>();
+    private ArrayList<Restaurant> FoodList = new ArrayList<>();
     public final int pheromonesValue = 10;
     private boolean[] visitedPits;
 
@@ -144,7 +145,7 @@ public class Ecosystem {
         return EventsList;
     }
 
-    public ArrayList<Nest> getFoodList() {
+    public ArrayList<Restaurant> getFoodList() {
         return FoodList;
     }
 
@@ -230,6 +231,14 @@ public class Ecosystem {
 
     public Nest getStop(Ant ant) {
         //TODO GET FOOD
+        if (this.isFoodSelected) {
+            if(this.checkHourToEat(ant)) {
+                Restaurant restaurant = this.getRestaurant(ant);
+                if (restaurant != null) {
+                    return restaurant;
+                }
+            }
+        }
         if (this.isEventSelected) {
             //event = chooseEvent
             Nest event = this.chooseEvent(ant);
@@ -243,6 +252,46 @@ public class Ecosystem {
             Pit pit = this.choosePit(ant);
             return pit;
         }
+    }
+
+    private Restaurant getRestaurant(Ant ant) {
+        //check from the list of restaurant, if they are open and if they and if they have the food that the ant wants
+        //if they are open, check if they are in the ant's preferences
+        ArrayList<Restaurant> restaurantsSelected = new ArrayList<>();
+        for (Restaurant restaurant : this.FoodList) {
+            if(restaurant.isOpen(this.weekDay, this.currentHour)) {
+               if(restaurant.isInPreferences(ant.getFood())) {
+                restaurantsSelected.add(restaurant);
+               }
+            }
+        }
+        if(restaurantsSelected.size() > 0) {
+            return this.getRestaurantFromSelected(restaurantsSelected, ant);
+        }else return null;
+    }
+
+    private Restaurant getRestaurantFromSelected(ArrayList<Restaurant> restaurantsSelected, Ant ant) {
+        //get the closest restaurant from the list of restaurants selected
+        Restaurant restaurantChosen = null;
+        double minDistance = Double.MAX_VALUE;
+        for (Restaurant restaurant1 : restaurantsSelected) {
+            double restaurantDistance = DistanceCalculator.getDistance(currentLatitude, currentLongitude,restaurant1.getLatitude(), restaurant1.getLongitude() , 'K');
+            if(restaurantDistance < minDistance) {
+                minDistance = restaurantDistance;
+                restaurantChosen = restaurant1;
+            }
+        }
+        return restaurantChosen;
+    }
+
+    private boolean checkHourToEat(Ant ant) {
+        int currentHourTime = Integer.parseInt(currentHour.split(":")[0]);
+        int currentMinuteTime = Integer.parseInt(currentHour.split(":")[1]);
+        int foodStarHourTime = Integer.parseInt(ant.getFoodHour().split(":")[0]);
+        int foodStarMinuteTime = Integer.parseInt(ant.getFoodHour().split(":")[1]);
+        if(currentHourTime >= foodStarHourTime || (currentHourTime == foodStarHourTime && currentMinuteTime >= foodStarMinuteTime)){
+            return true;
+        }else return false;
     }
 
     private Pit choosePit(Ant ant) {

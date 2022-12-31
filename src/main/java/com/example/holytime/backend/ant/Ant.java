@@ -20,5 +20,5 @@ public class Ant {
     private String [] food;
     private String [] preferences;
     private String [] profiles;
-
+    private String foodHour;
 }

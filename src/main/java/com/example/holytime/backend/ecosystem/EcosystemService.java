@@ -2,15 +2,14 @@ package com.example.holytime.backend.ecosystem;
 
 import com.example.holytime.backend.ant.Ant;
 import com.example.holytime.backend.event.Event;
-import com.example.holytime.backend.google.GoogleService;
 import com.example.holytime.backend.matrix.Matrix;
 import com.example.holytime.backend.nest.Nest;
 import com.example.holytime.backend.pit.Pit;
+import com.example.holytime.backend.stop.Stop;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -19,7 +18,7 @@ public class EcosystemService {
         public EcosystemService() {
             this.ecosystem = new Ecosystem();
         }
-        public void createNewRoute(Ant ant) {
+        public String createNewRoute(Ant ant) {
 
             System.out.println("La peticion es");
             System.out.println(ant.toString());
@@ -52,9 +51,7 @@ public class EcosystemService {
                 int id = this.ecosystem.getStopId();
                 //add movement to route
                 Matrix matrix = ecosystem.getMovement(this.ecosystem.getCurrentLatitude(), this.ecosystem.getCurrentLongitude(), nextStep.getLatitude(), nextStep.getLongitude());
-                //add stop to route
-                movements.put(id, matrix);
-                stops.put(id, nextStep);
+
 
                 //  add time of movement and update current values
 
@@ -65,9 +62,19 @@ public class EcosystemService {
                         totalTimeSpent = totalTimeSpent - matrix.getTime();
                     }
                 }
+                //Add to the String startTime whose format is HH:mm the value of matrix.getTime whose value is an int in minutes. The result must be a string with the format HH:mm
+                String startTime = this.ecosystem.addTime(this.ecosystem.getCurrentHour(), matrix.getTime());
+
                 this.ecosystem.updateCurrentHour(totalTimeSpent);
                 this.ecosystem.updateTimeLeft(totalTimeSpent);
                 this.ecosystem.updateCurrentLocation(nextStep.getLatitude(), nextStep.getLongitude());
+
+                String endTime = this.ecosystem.getCurrentHour();
+
+                Stop stop = new Stop(nextStep, startTime, endTime);
+                //add stop to route
+                movements.put(id, matrix);
+                stops.put(id, stop);
 
                 System.out.println("Hora actual : " + this.ecosystem.getCurrentHour());
                 System.out.println("Tiempo restante : " + this.ecosystem.getTimeLeft());
@@ -91,6 +98,15 @@ public class EcosystemService {
             }
             //save pheromones in database
             this.ecosystem.updatePhremonesGraph();
+            //create a JSON object with the stops and movements and ant
+            Gson gson = new Gson();
+            String stopsJson = gson.toJson(stops);
+            String movementsJson = gson.toJson(movements);
+            String antJson = gson.toJson(ant);
+            String json = "{\"stops\":"+stopsJson+",\"movements\":"+movementsJson+",\"ant\":"+antJson+"}";
+            return json;
+
+
 
         }
 

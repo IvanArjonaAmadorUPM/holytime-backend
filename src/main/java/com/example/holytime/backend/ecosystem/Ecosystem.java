@@ -431,4 +431,18 @@ public class Ecosystem {
             this.pheromonesGraph.put(String.valueOf(i), aux);
         }
     }
+
+    public String addTime(String startTime, int time) {
+        int currentHour = Integer.parseInt(startTime.split(":")[0]);
+        int currentMinute = Integer.parseInt(startTime.split(":")[1]);
+        int newMinute = currentMinute + time;
+        int newHour = currentHour + newMinute / 60;
+        newMinute = newMinute % 60;
+        //check if new minute is 1 long
+        if (newMinute < 10) {
+            return newHour + ":0" + newMinute;
+        } else {
+            return newHour + ":" + newMinute;
+        }
+    }
 }

@@ -15,7 +15,7 @@ public class EcosystemControler {
    EcosystemService ecosystemService;
 
     @GetMapping()
-    public void createNewAnt(@RequestBody Ant ant) {
-        ecosystemService.createNewRoute(ant);
+    public String createNewAnt(@RequestBody Ant ant) {
+        return ecosystemService.createNewRoute(ant);
     }
 }

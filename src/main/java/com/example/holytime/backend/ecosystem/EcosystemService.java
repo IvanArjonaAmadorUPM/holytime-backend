@@ -21,6 +21,9 @@ public class EcosystemService {
             this.ecosystem = new Ecosystem();
         }
         public String createNewRoute(Ant ant) {
+            System.out.println("*******************************************************************************************************************************************************");
+            System.out.println("************************************************************************* NUEVA RUTA ******************************************************************************");
+            System.out.println("*******************************************************************************************************************************************************");
 
             System.out.println("La peticion es");
             System.out.println(ant.toString());
@@ -85,7 +88,7 @@ public class EcosystemService {
 
             }
             System.out.println("///////////////////////////////////////////////");
-            System.out.println("La ruta es");
+            System.out.println("La ruta es:");
             // show route
             System.out.println("longitud de la visita: " + stops.size());
 
@@ -93,11 +96,11 @@ public class EcosystemService {
                 Nest nest = stops.get(i);
                 Matrix matrix = movements.get(i);
                 if(matrix!=null){
-                    System.out.println("Movimiento: " + matrix.getTime() + " minutos" + " distancia: " + matrix.getDistance() + " KM");
+                    System.out.println("Movimiento: " + matrix.getTime() + " minutos" + " en una distancia de: " + matrix.getDistance() + " KM");
                 }
-                System.out.println("Iteración: "+ (i+1) + " elegido: " + nest.getName());
-
+                System.out.println("Parada: "+ (i+1) + " elegido: " + nest.getName());
             }
+            System.out.println("///////////////////////////////////////////////");
             //save pheromones in database
             this.ecosystem.updatePhremonesGraph();
             //create a JSON object with the stops and movements and ant

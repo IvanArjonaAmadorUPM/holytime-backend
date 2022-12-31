@@ -65,13 +65,19 @@ public class Ecosystem {
 
         try {
                 //get class type of object
-                this.pheromonesGraph = firebaseService.getPheromones();
-                for (int i = 0; i < this.PitList.size(); i++) {
-                    int auxiliarArray[] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
-                    this.pheromonesGraph.put(Integer.toString(i), auxiliarArray);
-                }
-                System.out.println("Estado inicial del grafo de feromonas");
-                this.printPheromonesGraph();
+            this.pheromonesGraph = firebaseService.getPheromones();
+            //print this.pheromonesGraph
+
+           /* for (int i = 0; i < this.PitList.size(); i++) {
+                int auxiliarArray[] = oMapper.convertValue(this.pheromonesGraph.get(Integer.toString(i)), int[].class);
+                System.out.println("***************************************" + auxiliarArray.getClass());
+                this.pheromonesGraph.put(Integer.toString(i), auxiliarArray);
+            }
+            /*
+            */
+            System.out.println("--------------Estado inicial del grafo de feromonas-----------");
+            this.printPheromonesGraph();
+
 
 
         } catch (ExecutionException e) {
@@ -102,6 +108,7 @@ public class Ecosystem {
 
 
     public void initPitList() {
+        this.PitList = new ArrayList<Pit>();
         Pit pit;
         pit = new Pit("Capilla del Oidor", 1, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4814468, -3.3636800, 30, 0.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"}, "10:00-14:00/16:00-19:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
@@ -150,6 +157,7 @@ public class Ecosystem {
     }
 
     public void initEventList() {
+        this.EventsList = new HashMap<>();
         FirebaseService firebaseService = new FirebaseService();
         try {
             this.EventsList = firebaseService.getEvents();
@@ -161,6 +169,7 @@ public class Ecosystem {
     }
 
     public void initFoodList() {
+        this.FoodList = new ArrayList<>();
         Restaurant restaurant;
         restaurant = new Restaurant("McDonald's", 1, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"rapida"}, 40.482427, -3.364581, 90, 10.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado","Domingo"}, "11:00-23:00", true);
         this.FoodList.add(restaurant);
@@ -204,6 +213,7 @@ public class Ecosystem {
     }
 
     public void initLocalVariables(Ant ant) {
+        this.stopsId = 0;
         if (this.visitedPits == null) this.visitedPits = new boolean[this.PitList.size()];
 
         for (int i = 0; i < this.PitList.size(); i++) {
@@ -230,7 +240,6 @@ public class Ecosystem {
     }
 
     public Nest getStop(Ant ant) {
-        //TODO GET FOOD
         if (this.isFoodSelected) {
             if(this.checkHourToEat(ant)) {
                 Restaurant restaurant = this.getRestaurant(ant);

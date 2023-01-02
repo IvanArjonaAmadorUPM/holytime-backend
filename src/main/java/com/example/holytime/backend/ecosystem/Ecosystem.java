@@ -240,10 +240,11 @@ public class Ecosystem {
     }
 
     public Nest getStop(Ant ant) {
-        if (this.isFoodSelected) {
+        if (this.isFoodSelected && !this.isAntVisitedFood) {
             if(this.checkHourToEat(ant)) {
                 Restaurant restaurant = this.getRestaurant(ant);
                 if (restaurant != null) {
+                    this.isAntVisitedFood = true;
                     return restaurant;
                 }
             }

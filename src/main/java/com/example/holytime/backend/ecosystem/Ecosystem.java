@@ -128,7 +128,7 @@ public class Ecosystem {
         this.PitList.add(pit);
         pit = new Pit("Palacio Laredo. Museo Cisneriano", 9, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4880255, -3.3639165, 30, 1.0f, new String[]{"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"}, "10:30-13:30/16:30-18:30", false, 0, 0, new String[]{});
         this.PitList.add(pit);
-        pit = new Pit("Museo Casa Natal Cervantes", 10, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4824514, -3.3671649, 40, 0.0f, new String[]{"Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"}, "10:00-18:00", true, 0, 0, new String[]{});
+        pit = new Pit("Museo Casa Natal de Cervantes", 10, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Museo"}, 40.4824514, -3.3671649, 40, 0.0f, new String[]{"Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"}, "10:00-18:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
         pit = new Pit("Catedral Magistral", 11, new String[]{"Familiar", "Amigos", "Mayores", "Infantil", "Solo", "Joven"}, new String[]{"Religioso"}, 40.4809402, -3.3691787, 20, 2.0f, new String[]{"Lunes", "Martes", "Miercoles", "Sabado", "Viernes"}, "10:30-14:00/16:00-18:00", true, 0, 0, new String[]{});
         this.PitList.add(pit);
